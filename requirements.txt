@@ -1,4 +1,4 @@
-_tflow_1100_select==0.0.1
+_tflow_1100_select==0.0.1 gpu
 absl-py==0.4.1
 astor==0.7.1
 click==6.7
