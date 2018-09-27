@@ -1,6 +1,14 @@
+absl-py==0.4.1
+astor==0.7.1
 click==6.7
 Flask==1.0.2
+gast==0.2.0
+grpcio==1.12.1
 itsdangerous==0.24
 Jinja2==2.10
 MarkupSafe==1.0
 Werkzeug==0.14.1
+
+numpy==1.15.1
+nltk==3.3.0
+https://storage.googleapis.com/tensorflow/mac/cpu/tensorflow-1.0.1-py2-none-any.whl  
