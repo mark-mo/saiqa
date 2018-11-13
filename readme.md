@@ -1,3 +1,1 @@
-This is miminum code required for an Azure Flask project deployment. 
-
-Check out my [blog post](http://timmyreilly.azurewebsites.net/starter-site-for-flask-on-azure-web-apps/) if you have any other questions. 
+This is miminum code required for an Azure Flask project deployment retrieved from here and used for the base application: https://github.com/timmyreilly/babypython-azure
