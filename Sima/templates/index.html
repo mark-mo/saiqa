@@ -1,14 +1,8 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ title }} - My Flask Application</title>
-    <link rel="stylesheet" type="text/css" href="/static/content/site.css" />
-</head>
-
-<body>
-    <h1>{{ title }}</h1>
-    <p> Welcome to python on Azure</p>
-</body>
-
+{% extends "base.html" %}
+{% block content %}
+  <img src="static/closedBook.png" class="closed">
+  <form>
+    <input type="submit" name="submit_button" value="Login">
+    <input type="submit" name="submit_button" value="Register">
+  </form>
+{% endblock %}
