@@ -1,4 +1,4 @@
-#A simple controller for logging in and registering
+#A simple controller for handling questions and learning. Not implemented yet
 # Created by Mark Mott
 from flask import Blueprint, render_template, request, session
 
@@ -10,13 +10,18 @@ from wtforms import StringField, BooleanField, SubmitField
 from wtforms.validators import DataRequired
 import json
 
+# Creates a way for routes outside of this script to work
 question_controller = Blueprint('question_controller', __name__, template_folder='templates')
+# Handles logging.
+# TODO: Change to decorator
 logging = Loggingdec()
 
 # Handles entering the question panel
+# TODO: Add a decorator to only let admins have access to this method
 @question_controller.route('/question', methods=['GET', 'POST'])
 def question():
     logging.entry("QuestionController.question")
+    # TODO: Check if user is in session
     user = session['user']
     data = json.loads(user)
     form = QuestionForm(request.form)
@@ -34,20 +39,25 @@ def question():
     logging.exit("QuestionController.question")
     return render_template('questionPanel.html', title='Question', user=data['username'], form=form)
 
-# Handles entering the traing panel and training off of input
-@question_controller.route('/train')
-def train():
+# Handles entering the learning panel and training off of input
+# TODO: Add a decorator to only let admins have access to this method
+@question_controller.route('/learn')
+def learn():
     logging.entry("QuestionController.train")
     user = session['user']
     data = json.loads(user)
+    # Add FlaskForm to handle inputing new data
+    # Get list of unknown nouns from file
     logging.exit("QuestionController.train")
-    return render_template('train.html', title='Train', user=data['username'])
+    return render_template('learn.html', title='Learn', user=data['username'])
 
 # Called by AJAX to update the responses
 @question_controller.route('/_answer')
 def updateAnswer():
     logging.entry("QuestionController.updateAnswer")
     list = [] # TODO Get list of current conversation with Sima
+    # Get most recent responses
+    # Add new responses to list
     logging.exit("QuestionController.updateAnswer")
     return jsonify(result=list)
 
@@ -63,3 +73,5 @@ def updateHistory():
 class QuestionForm(FlaskForm):
     question = StringField('Question', validators=[DataRequired()])
     submit = SubmitField('Enter Question Here...')
+    
+# Create a FlaskForm for the learning module

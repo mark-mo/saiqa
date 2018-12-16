@@ -4,10 +4,14 @@ from flask import Blueprint, render_template, request, redirect, session
 
 from Sima.Utility.LoggingDecorator import Loggingdec
 
+# Creates a way for routes outside of this script to work
 main_controller = Blueprint('main_controller', __name__, template_folder='templates')
+# Handles logging.
+# TODO: Change to decorator
 logging = Loggingdec()
 
 # Handles going to the main page and going to the login or register page
+# TODO: Remove route index
 @main_controller.route('/')
 @main_controller.route('/index')
 def showMain():
@@ -23,7 +27,7 @@ def showMain():
         return redirect('reg') # Goes to the Register logic
     elif request.method == 'GET':
         logging.exit("MainController.showMain")
-        return render_template('index.html', title='Home')
+        return render_template('/', title='Home')
 
 # Method to enter the about page for the application
 @main_controller.route('/about')

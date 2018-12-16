@@ -2,6 +2,7 @@ absl-py==0.4.1
 astor==0.7.1
 click==6.7
 Flask==1.0.2
+flask-wtf==0.4.1
 gast==0.2.0
 grpcio==1.12.1
 itsdangerous==0.24
