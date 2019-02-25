@@ -1,0 +1,12 @@
+{% extends "saiqa/base.html" %}
+{% block content %}
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+<form action="/saiqa/login/" method="post">
+  {% csrf_token %}
+  <input type="submit" name="submit_button" value="Login">
+</form>
+<form action="/saiqa/reg/" method="post">
+  {% csrf_token %}
+  <input type="submit" name="submit_button" value="Register">
+</form>
+{% endblock %}

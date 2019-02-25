@@ -1,0 +1,11 @@
+include README.rst
+recursive-include saiqa/Controller *
+recursive-include saiqa/DAO *
+recursive-include saiqa/Exception *
+recursive-include saiqa/Model *
+recursive-include saiqa/Service *
+recursive-include saiqa/static *
+recursive-include saiqa/templates *
+recursive-include saiqa/Training *
+recursive-include saiqa/Utility *
+recursive-include docs *

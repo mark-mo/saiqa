@@ -1,0 +1,15 @@
+{% extends "saiqa/base.html" %}
+{% load staticfiles %}
+{% block content %}
+    <img src="{% static "saiqa/firstPage.png" %}" class="container">
+    <div class="front">
+      <h1>Register</h1>
+      <form action="/reguser" method="post">
+	<label for="username">Enter name: </label>
+	<input id="username" type="text" name="name_field" value="Name for user.">
+	<label for="password">Enter password: </label>
+	<input id="password" type="text" name="name_field" value="Password for user.">
+	<input type="submit" value="reg">
+      </form>
+    </div>
+{% endblock %}

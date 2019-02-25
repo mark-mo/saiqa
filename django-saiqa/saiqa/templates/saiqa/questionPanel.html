@@ -1,0 +1,64 @@
+{% extends "saiqa/base.html" %}
+{% block content %}
+{% load staticfiles %}
+<script type="text/javascript">
+$(function(){
+  $("#questionform").on("submit", function(event) {
+	event.preventDefault();
+	let frm = $('#FORM-ID');
+	$.ajaxSetup({ 
+     		beforeSend: function(xhr, settings) {
+         		function getCookie(name) {
+             			var cookieValue = null;
+             			if (document.cookie && document.cookie != '') {
+                 			var cookies = document.cookie.split(';');
+                 			for (var i = 0; i < cookies.length; i++) {
+                     				var cookie = jQuery.trim(cookies[i]);
+                     				// Does this cookie string begin with the name we want?
+                     				if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                         				cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                         				break;
+                     				}
+                 			}
+             			}
+             			return cookieValue;
+         		}
+         		if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+             			// Only send the token to relative URLs i.e. locally.
+             			xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+         		}
+     		} 
+	});
+     	$.ajax({
+		type: "POST",
+        	url: "/saiqa/answer/",
+		data: document.getElementById('question').value,
+        	dataType: "json",
+        	success: function(data)
+    		{
+			let stdata = data.toString()
+			alert(typeof stdata)
+			let res = stdata.replace(/,/g, "<br>");
+			alert(res)
+      	  		document.getElementById("history").innerHTML = res;
+        	},
+      	});
+  });
+})
+</script>
+    <img src="{% static "saiqa/middlepage.png" %}" class="container">
+    <div class="front">
+      <h1>Question</h1>
+      <div class="history">
+	<p id="history">Hello {{ user.username }}, welcome to SAI-QA.  What question do you have today?</p>
+      </div>
+      <form method="post" id="questionform" name="questionform">
+        <p>
+            <label for="question">Enter name: </label>
+	    <input id="question" type="text" name="question" value="question">
+        </p>
+        <p><button type="submit" value="submit">Submit</button></p>
+      </form>
+      <div class="result"></div>
+    </div>
+{% endblock %}

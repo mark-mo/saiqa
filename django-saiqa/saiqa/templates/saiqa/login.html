@@ -1,0 +1,13 @@
+{% extends 'saiqa/base.html' %}
+{% load staticfiles %}
+{% block content %}
+<img src="{% static "saiqa/firstPage.png" %}" class="container">
+<form action="/saiqa/loginuser/" method="post">
+	{% csrf_token %}
+	<label for="username">Enter name: </label>
+	<p><input id="username" type="text" name="username" value="Name for user."></p>
+	<p><label for="password">Enter password: </label></p>
+	<p><input id="password" type="text" name="password" value="Password for user."></p>
+	<p><input type="submit" value="login"></p>
+</form>
+{% endblock %}

@@ -1,0 +1,77 @@
+{% load staticfiles %}
+<html>
+    <head>
+      {% if title %}
+      <title>{{ title }} - SAIQA</title>
+      {% else %}
+      <title>Welcome to SAIQA</title>
+      {% endif %}
+      <link rel="shortcut icon" href="{% static "saiqa/psi.png" %}">
+      <script type="text/javascript" src="http://code.jquery.com/jquery-3.2.1.min.js"></script>
+      <style>
+        body {
+          background-image: linear-gradient(white, grey);
+        }
+        .header {
+          background-color: grey;
+          position: fixed;
+          left: 0;
+          top: 0;
+          width: 100%;
+        }
+        .container {
+          position: relative;
+          display: block;
+          margin-left: auto;
+          margin-right: auto;
+          width: 50%;
+	  height: 75%;
+        }
+	.closed {
+	  position: relative;
+          display: block;
+          margin-left: auto;
+          margin-right: auto;
+	  margin-top: 10%
+          width: 30%;
+	  height: 75%;
+	}
+	.middle {
+	  margin-top: 100 px;
+	}
+        .front {
+          position: absolute;
+          top: 35%;
+          left: 60%;
+          transform: translate(-50%, -50%);
+        }
+        .footer {
+          background-color: black;
+          color: white;
+          position: fixed;
+          left: 0;
+          bottom: 0;
+          width: 100%;
+        }
+	textarea {
+	  font-family: ami r
+	}
+      </style>
+    </head>
+    <body>
+        <div>
+	  <img src="{% static "saiqa/logo.png" %}" alt="Related Book 1" width="20%" height="auto"><a href="/saiqa/main/">
+	  <font face="ami r">Home</font></a> <a href="/saiqa/about/"><font face="ami r">About</font></a>
+	</div>
+        <hr>
+        <div class="content container">
+            <div class="row">
+                <div class="col-md-8">
+                    {% block content %}
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+        <div class="footer"><p>  Made by Mark S. Mott for the GCU 2018-2019 Computer Science Capstone</p></div>
+    </body>
+</html>

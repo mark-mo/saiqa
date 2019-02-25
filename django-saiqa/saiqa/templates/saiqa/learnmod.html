@@ -1,0 +1,24 @@
+{% extends "saiqa/base.html" %}
+{% load staticfiles %}
+{% block content %}
+    <img src="{% static "saiqa/leftflip.png" %}" class="container">
+    <div class="front">
+      <h1>Learning</h1>
+      <form action="saiqa:know" method="post">
+        {% csrf_token %}
+        <p>
+            <label for="sent">Sentence: </label>
+	    <input id="sent" type="text" name="name_field" value="sentence">
+        </p>
+        <p>
+            <label for="source">Sentence: </label>
+	    <input id="source" type="text" name="name_field" value="Enter source">
+        </p>
+        <p>
+            <label for="trust">Enter trust level (1-10): </label>
+	    <input id="trust" type="text" name="name_field" value="trust">
+        </p>
+        <p><input type="submit" value="login"></p>
+      </form>
+    </div>
+{% endblock %}
