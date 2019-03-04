@@ -4,11 +4,11 @@
     <img src="{% static "saiqa/leftflip.png" %}" class="container">
     <div class="front">
       <h1>Learning</h1>
-      <form action="saiqa:know" method="post">
+      <form action="/saiqa/learn/" method="post">
         {% csrf_token %}
         <p>
             <label for="sent">Sentence: </label>
-	    <input id="sent" type="text" name="name_field" value="sentence">
+	    <input id="sent" type="text" name="sent" value="sentence">
         </p>
         <p>
             <label for="source">Sentence: </label>

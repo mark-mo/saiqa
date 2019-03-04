@@ -9,13 +9,13 @@ reader = ""
 
 # Converts octal decimal to its corresponding character
 def probsToWord(prob):
-    if prob[0] == 1:
+    if int(prob[0]) == 1:
         return 'time'
-    if prob[1] == 1:
+    if int(prob[1]) == 1:
         return 'location'
-    if prob[2] == 1:
+    if int(prob[2]) == 1:
         return 'property'
-    if prob[3] == 1:
+    if int(prob[3]) == 1:
         return 'possession'
     else:
         return 'property'
@@ -76,12 +76,10 @@ def wideArray(x, weight):
 
 # Adjusts size of a 2-d array to allow for matrix multiplication
 def wideSingleArray(x, weight):
-    high = 0
-    length = len(x)
-
-    wide = np.zeros(len(weight))
-    for i in range(0,len(x)):
+    wide = np.zeros([len(weight)])
+    for i in range(0, len(x)):
         wide[i] = x[i]
+    np.asarray(wide)
     return wide
 
 # Reformats input array into int32

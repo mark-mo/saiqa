@@ -9,8 +9,6 @@ from saiqa.Model.Sentence import Sentence
 import saiqa.Training.softmaxR as sr
 import spacy
 
-print('InputHandler')
-
 
 class InputHandler():
     # Removes unwanted noise from the input
@@ -43,11 +41,14 @@ class InputHandler():
         sentences = []
         # Seperate input into sentences
         input = self.cleanUp(input)
+        print(input)
         # Lemmatize input
         # Get subjects
         for line in input:
             print(line)
             # Put a space between the last letter and the period
+            if line == '':
+                break
             hold = line[:-1]
             hold = hold + ' .'
             # Get the subject

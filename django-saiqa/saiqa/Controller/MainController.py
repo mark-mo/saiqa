@@ -8,8 +8,11 @@ from saiqa.Model.UserModel import User
 # Default route, only purpose is to set a guest user
 def index(request):
     user = User()
+    # TODO: Change session to cached
     request.session['user'] = user.__dict__ # Puts the user into the session
-    print(request.session['user'])
+    if 'history' in request.session:
+        del request.session['history'] # Clears the history of past session
+    
     return redirect('/saiqa/main/')
 
 # Create your views here.

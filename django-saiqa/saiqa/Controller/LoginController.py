@@ -6,17 +6,24 @@ from django.template import loader
 
 from saiqa.Model.UserModel import User
 from saiqa.Service.UserService import UserService
+from saiqa.Service.QuestionService import QuestionService
 from saiqa.Utility.LoggingDecorator import Loggingdec
+from saiqa.Exception.CustomException import FormatError, PasswordMismatchError, EmptyFormError
 import json
+import re
 
 # Handles logging.
 # TODO: Change to decorator
 logging = Loggingdec()
 
 service = UserService()
+qser = QuestionService()
 
 # Goes to login
 def login(request):
+    # Get a random fact from the database
+    randfact = qser.findByRandom()
+    print(randfact)
     context = {
         'user_list': 'hold',
     }
@@ -28,20 +35,29 @@ def loginuser(request):
     if request.method == 'POST':
         user = User(request.POST.get('username'), request.POST.get('password'))
         # Log in
-        if not (service.findUser(user)):
+        foundU = service.findUser(user)
+        if foundU == -1:
+            # Replace with error
+            print('User not found')
             logging.exit("LoginController.login")
             return redirect('/saiqa/login/')
+        user.setpermission(foundU)
         request.session['user'] = user.__dict__ # Puts the user into the session
+        print(user.__dict__)
         history = ['Hello '+ user.getusername() + ', welcome to SAI-QA.  What question do you have today?']
         request.session['history'] = json.dumps(history)
         print('Thanks for Logging in')
         logging.exit("LoginController.login")
         if user.getpermission() == 2:
-            redirect('/saiqa/understand/')
+            print('Hello admin')
+            return redirect('/saiqa/understand/')
         return redirect('/saiqa/question/')
 
 # Goes to registration
 def reg(request):
+    # Get a random fact from the database
+    randfact = qser.findByRandom()
+    print(randfact)
     context = {
         'user_list': 'hold',
     }
@@ -49,16 +65,54 @@ def reg(request):
 
 def reguser(request):
     logging.entry("LoginController.reguser")
-    
     user = User(request.POST.get('username'), request.POST.get('password'))
-    request.session[0] = user
+    
+    try:
+        if user.getpassword() == '':
+            raise EmptyFormError
+        if user.getpassword() != request.POST.get('repassword'):
+            raise PasswordMismatchError
+    except PasswordMismatchError: # Kick the user back to the register screen
+        logging.exit('Passwords do not match')
+        context = {
+            'user_list': 'hold',
+        }
+        return redirect('/saiqa/reg/')
+    except EmptyFormError: # Kick the user back to the register screen
+        logging.exit('Fill in the form')
+        context = {
+            'user_list': 'hold',
+        }
+        return redirect('/saiqa/reg/')
+    
+    specres = re.findall('[$&+,=?@`~^*%!-_]', user.getpassword())
+    upres = re.findall('[A-Z]', user.getpassword())
+    print(len(specres))
+    print(len(upres))
+    
+    try:
+        if(len(user.getusername()) < 4 or len(user.getusername()) > 20):
+            raise FormatError
+        if(len(user.getpassword()) < 4 or len(user.getpassword()) > 20):
+            raise FormatError
+        if(len(specres) < 2 or len(specres) < 2):
+            raise FormatError
+    except FormatError:
+        logging.exit('Incorrect formating')
+        context = {
+            'user_list': 'hold',
+        }
+        return redirect('/saiqa/reg/')
+        
+    request.session['user'] = user.__dict__ # Puts the user into the session
     # If true, the user exists
     if not (service.createUser(user)):
         logging.exit("LoginController.reguser")
-        return redirect("/reg")
+        print('User already created') # Switch to a logger
+        return redirect("/saiqa/reg/")
     # TODO: Pass in a random fact from the database
     logging.exit("LoginController.reguser")
-    return redirect("/question")
+    return redirect("/saiqa/login/")
 
 # Test login
 def _testlogin(user):

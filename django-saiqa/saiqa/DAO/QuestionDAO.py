@@ -50,6 +50,7 @@ class QuestionDAO(Connection):
         values = [str(sub), cat]  # Array allows for cleaner database calls
         # Get a list of sentences based off of subject and the category
         selectQuery = 'SELECT * FROM data WHERE data.d_subject = %s AND data.d_category = %s'
+        print(values)
         self.cur.execute(selectQuery, values)
         results = self.cur.fetchall()  # Get the result of the query
         
@@ -94,13 +95,13 @@ class QuestionDAO(Connection):
             return ['Nothing', '']  # Switch to raising an error
         
     # Need to test.  Goes to Login and Register
-    def findByRandom(self):
+    def findbyrandom(self):
+        self.connect()
         selectQuery = 'SELECT * FROM data ORDER BY RAND() LIMIT 1'
         self.cur.execute(selectQuery)
         results = self.cur.fetchall()  # Get the result of the query
         
-        print(results)
-        return results
+        return results[0][2]
 
     # Logic to increment how many times a user looked up a subject
     def updatesubject(self, sub, user):

@@ -11,6 +11,7 @@ import numpy as np
 import scipy.sparse
 import sys
 import argparse
+import os
 import saiqa.Training.importData as id
 
 gradArr = []
@@ -131,13 +132,15 @@ def getProbs(someX):
 
 
 def response(x):
-    w = np.loadtxt("weights\softweights.csv", delimiter=",")
+    wpath = os.getcwd() + "\saidj\weights\softweights.csv"
+    w = np.loadtxt(wpath, delimiter=",")
     someX = id.octalConv(x)
-    someX = id.wideArray(someX, w)
+    someX = id.wideSingleArray(someX, w)
+    scores = np.dot(someX, w)
 
-    probs = softmax(np.dot(someX, w))
-    word = id.probsToWord(probs)
-    return word
+    probs = softmax(scores)
+    word = toSparse(probs)
+    return id.probsToWord(word)
 
 
 def getAccuracy(someX, someY, w):
