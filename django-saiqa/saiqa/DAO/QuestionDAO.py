@@ -14,6 +14,7 @@ class QuestionDAO(Connection):
         self.connect()  # Create database connection using the superclass
         # Check if reference already exists
         values = [ref, rely]
+        print(values)
         selectQuery = 'SELECT r_id FROM reference WHERE r_fullSource = %s AND r_trust = %s'
         self.cur.execute(selectQuery, values)
         result = self.cur.fetchall()  # Get the result of the query
@@ -23,7 +24,15 @@ class QuestionDAO(Connection):
             self.cur.execute(insertQuery, values)
             self.cnx.commit()
             result = self.cur.lastrowid  # Gets the id of the newly created user
-            
+        
+        if type(result) is list:
+            print('Fixing reference id')
+            result = result[0]
+            print(result)
+            if type(result) is tuple:
+                print('...')
+                result = result[0]
+                print(result)
         print('Get ready to create')
         for entry in sents:
             # Insert sentence
@@ -31,7 +40,7 @@ class QuestionDAO(Connection):
             if isinstance(entry.getsubject(), list):
                 subject = entry.getsubject()[0]
             else:
-                subject = entry.getsubject()
+                subject = str(entry.getsubject())
             values = [subject, entry.getsentence(), entry.getcategory(), result]  # Array allows for cleaner database calls
             # Create a new user if it does not exist
             insertQuery = 'INSERT INTO data (`d_subject`, `d_sentence`,`d_category`, `r_id`) VALUES (%s,%s,%s,%s)'
@@ -66,30 +75,43 @@ class QuestionDAO(Connection):
     # Need to test
     def findbyfrequent(self, user):
         self.connect()
-        values = [user.getname()]
+        values = [user]
         
-        selectquery = 'SELECT * FROM userdata INNER JOIN user ON userdata.u_id = user.u_id WHERE user.u_name = %s'
-        self.cur.execute(selectQuery, values)
+        selectquery = 'SELECT ud_request, d_id FROM userdata INNER JOIN user ON userdata.u_id = user.u_id WHERE user.u_name = %s'
+        self.cur.execute(selectquery, values)
         results = self.cur.fetchall()  # Get the result of the query
         
-        print(results)
         highest = 0
-        for i in range(0, len(results)):
-            if highest < results[i]['ud_request']:
-                highest = i
+        udr = results[0][0]
+        udid = results[0][1]
         
-        print(results[highest])
-        values = [results[highest]['d_id']]  # Array allows for cleaner database calls
+        print(udr)
+        print(udid)
+        # Find the word with highest request rate
+        #for i in range(0, len(results)):
+        #    if highest < results[i]['ud_request']:
+        #        highest = i
+        # Get subject
+        values = [udid]
+        dataquery = 'SELECT d_subject FROM data WHERE d_id = %s'
+        self.cur.execute(dataquery, values)
+        result = self.cur.fetchall()  # Get the result of the query
+        
+        cleaned = self.stripdata(result)
+        print(cleaned)
+        # Testing
+        values = [cleaned]
+        # values = [results[highest]['d_id']]  # Array allows for cleaner database calls
         # Get a list of sentences based off of subject and the category
-        selectQuery = 'SELECT * FROM data WHERE d_id'
-        self.cur.execute(selectQuery, values)
+        selQuery = 'SELECT d_sentence FROM data WHERE d_subject = %s ORDER BY RAND() LIMIT 1'
+        self.cur.execute(selQuery, values)
         results = self.cur.fetchall()  # Get the result of the query
         
         # Close the connection to the database
         self.cur.close()
         self.cnx.close()
         # If the database finds anything, create a user
-        if len(result) > 0:
+        if len(results) > 0:
             return results
         else:
             return ['Nothing', '']  # Switch to raising an error
@@ -106,25 +128,46 @@ class QuestionDAO(Connection):
     # Logic to increment how many times a user looked up a subject
     def updatesubject(self, sub, user):
         self.connect()  # Create database connection using the superclass
-        values = [user.getusername(), sub.getsubject()]  # Array allows for cleaner database calls
+        print(user)
+        values = [user, str(sub)]  # Array allows for cleaner database calls
         # Check if the subject has been search for by the user
         selectquery = 'SELECT ud_request FROM userdata INNER JOIN user ON userdata.u_id = user.u_id INNER JOIN data ON userdata.d_id = data.d_id WHERE user.u_name = %s AND data.d_subject = %s'
-        self.cur.execute(selectQuery, values)
+        self.cur.execute(selectquery, values)
         results = self.cur.fetchall()  # Get the result of the query
 
         # If the subject has been searched for, increment request amount by 1
         if len(results) > 0:
+            print('Updating')
             updateQuery = 'UPDATE userdata INNER JOIN user ON userdata.u_id = user.u_id INNER JOIN data ON userdata.d_id = data.d_id SET ud_request = ud_request + 1 WHERE user.u_name = %s AND data.d_subject = %s'
             self.cur.execute(updateQuery, values)
-            results = self.cur.fetchall()  # Get the result of the query
-            return true
+            results = self.cnx.commit() # Commit sql statement
         # If the subject has not been searched for, create a new entry
-        
+        else:
+            print('Creating')
+            value1 = [str(sub)]  # Array allows for cleaner database calls
+            value2 = [user]  # Array allows for cleaner database calls
+            # Check if the subject has been search for by the user
+            dataquery = 'SELECT d_id FROM data where d_subject = %s LIMIT 1'
+            userquery = 'SELECT u_ID FROM user WHERE u_NAME = %s'
+            self.cur.execute(dataquery, value1)
+            resultd = self.cur.fetchall()  # Get the result of the query
+            self.cur.execute(userquery, value2)
+            resultu = self.cur.fetchall()  # Get the result of the query
+            
+            if len(resultd) < 1:
+                print('Subject not found')
+                return False
+            # Clean ids
+            dataid = self.stripdata(resultd)
+            userid = self.stripdata(resultu)
+            values = [dataid, userid]  # Array allows for cleaner database calls
+            print(values)
+            insertQuery = 'INSERT INTO `userdata` (`ud_request`, `d_id`, `u_id`) VALUES (1, %s, %s)'
+            self.cur.execute(insertQuery, values)
+            self.cnx.commit() # Commit sql statement
+            
         # Close the connection to the database
         self.cur.close()
         self.cnx.close()
-        # If the database finds anything, create a user
-        if len(result) > 0:
-            return results
-        else:
-            return ['Nothing', '']  # Switch to raising an error
+        
+        return True

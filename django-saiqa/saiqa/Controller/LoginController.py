@@ -26,6 +26,7 @@ def login(request):
     print(randfact)
     context = {
         'user_list': 'hold',
+        'rf': randfact,
     }
     return render(request, 'saiqa/login.html', context)
 
@@ -60,6 +61,7 @@ def reg(request):
     print(randfact)
     context = {
         'user_list': 'hold',
+        'rf': randfact,
     }
     return render(request, 'saiqa/register.html', context)
 

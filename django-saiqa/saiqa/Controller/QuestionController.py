@@ -13,6 +13,7 @@ from saiqa.Model.Sentence import Sentence
 from saiqa.Service.QuestionService import *
 from saiqa.Utility.LoggingDecorator import *
 from saiqa.Utility.InputHandler import *
+from saiqa.Utility.GloveHandler import *
 import saiqa.Training.DMNInner as dmn
 import saiqa.Training.importData as id
 # Handles logging.
@@ -22,6 +23,7 @@ logging = Loggingdec()
 # Initialize classes
 question_service = QuestionService()
 inputhandler = InputHandler()
+glovehandler = GloveHandler()
 
 # Handles entering the question panel
 # TODO: Add a decorator to only let admins have access to this method
@@ -32,13 +34,15 @@ def question(request):
     if 'history' not in request.session:
         history = 'Hello '+ user['username'] + ', welcome to SAI-QA.  What question do you have today?'
         history_store.append(history)
-        request.session['history'] = history_store
+        request.session['history'] = history
     print(request.session['history'])
     context = {
         'user': request.session['user'],
         'history': request.session['history'],
     }
     logging.exit("QuestionController.question")
+    if user['permission'] == 2:
+        return render(request, 'saiqa/questionAPanel.html', context)
     return render(request, 'saiqa/questionPanel.html', context)
 
 # Answer the question
@@ -50,34 +54,72 @@ def answer(request):
     # Get user from the session
     data = request.session['user']
     history = request.session['history']
-    #history_load = json.loads(history)
-    print(history)
-    # TODO: If the user is an admin, go to a different page
-    # Get subject and category
-    cat_sent = inputhandler.storeInput(deres)[0]
+    history_load = history
+    if isinstance(history, str):
+        print('String')
+        history_load = []
+        history_load.append(history)
+    print(deres)
     
-    response = question_service.findbysubject(cat_sent.getsubject(), cat_sent.getcategory())
-    
-    sentences = []
-    cleanedSents = []
-    for line in response:
-        #sentence, subject, category
-        sentences.append(Sentence(line[2], line[1], line[3]))
-        cleanedSents.append(line[2])
-    answer = dmn.dmnrun(cleanedSents, cat_sent.getsentence())
-    # TODO: Update Answer and History sides
-    history.append(deres)
-    history.append(answer)
-    # request.session['history'] = json.dumps(history_load)
-    request.session['history'] = json.dumps(history)
-    logging.exit("QuestionController.answer")
-    return JsonResponse(history, safe=False)
+    # Return a random fact from the subject most often searched for by the user
+    if deres == 'random':
+        freqout = question_service.findbyfrequent(data["username"])
+        # Save response to session
+        history_load.append(deres)
+        history_load.append(freqout)
+        request.session['history'] = history_load
+        logging.exit("QuestionController.answer")
+        return JsonResponse(history_load, safe=False)
+    else:
+        # Get subject and category
+        cat_sent = inputhandler.storeInput(deres)[0]
+        
+        currsub = cat_sent.getsubject()
+        response = question_service.findbysubject(cat_sent.getsubject(), cat_sent.getcategory(), data["username"])
+        
+        attempt = 1
+        # Try and change the subject if no information is found
+        if response[0] == 'Nothing':
+            while attempt < 4:
+                newsubject = glovehandler.findnearest(currsub,attempt)
+                print('Trying ' + newsubject)
+                response = question_service.findbysubject(currsub, cat_sent.getcategory(), data["username"])
+                if response[0] != 'Nothing':
+                    break
+                print(newsubject + 'not found')
+                attempt = attempt + 1
+        
+        # If nothing is found surrounding the subject, return a negative
+        if response[0] == 'Nothing':
+            history_load.append(deres)
+            history_load.append('Could not find anything on' + currsub)
+            request.session['history'] = history_load
+            
+            logging.exit("QuestionController.answer")
+            return JsonResponse(history_load, safe=False)
+        
+        sentences = []
+        cleanedSents = []
+        for line in response:
+            #sentence, subject, category
+            sentences.append(Sentence(line[2], line[1], line[3]))
+            cleanedSents.append(line[2])
+        answer = dmn.dmnrun(cleanedSents, cat_sent.getsentence())
+        # TODO: Update Answer and History sides
+        history_load.append(deres)
+        history_load.append(answer)
+        request.session['history'] = history_load
+        logging.exit("QuestionController.answer")
+        return JsonResponse(history_load, safe=False)
 
 # Handles entering the learning panel and training off of input, requires port 9000 open
 # TODO: Add a decorator to only let admins have access to this method
 def understand(request):
     user = request.session['0']
-    print(user)
+    # Get list of unknown nouns
+    nounpath = os.getcwd() + "/saidj/weights/unknown.csv"
+    nounlist = np.loadtxt(nounpath, delimiter=",")
+    
     context = {
         'user': request.session['0'],
     }
@@ -92,8 +134,14 @@ def learn(request):
     ref = request.POST.get('source')
     rely = request.POST.get('trust')
     # Implement InputHandler
-    print(sentences)
-    output = inputhandler.storeInput(sentences)
+    output, nouns = inputhandler.storeInput(sentences)
+    
+    # Compare current subjects with unknown nouns list
+    currSub = question_service.getsubjects()
+    
+    # Add to unknown nouns list and save
+    nounpath = os.getcwd() + "/saidj/weights/unknown.csv"
+    np.savetxt(nounpath, nounlist, delimiter=",")
     
     # For testing
     for line in output:

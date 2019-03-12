@@ -2,6 +2,9 @@
 {% load staticfiles %}
 {% block content %}
 	<img src="{% static "saiqa/firstPage.png" %}" class="container">
+<div class="left">
+	{{ rf }}
+</div class>
 <div class="front">
 <form action="/saiqa/loginuser/" method="post">
 	{% csrf_token %}

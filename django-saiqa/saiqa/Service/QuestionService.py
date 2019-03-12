@@ -15,9 +15,12 @@ class QuestionService(object):
     
     
     # Passes a subject and a category to findUser in UserDAO
-    def findbysubject(self, sub, cat):
+    def findbysubject(self, sub, cat, user):
         # Get sentences
-        return self.data.findbysubject(sub, cat)
+        if self.data.updatesubject(sub, user):
+            return self.data.findbysubject(sub, cat)
+        else:
+            return ['Nothing', '']
     
     
     # Gets a random fact of the most searched subject

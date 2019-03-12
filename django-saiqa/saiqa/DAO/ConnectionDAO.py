@@ -6,6 +6,16 @@ from mysql.connector import errorcode
 # Created by: Mark Mott
 # A super class for creating a connection to the database
 class Connection:
+    def stripdata(self, id):
+        result = 0
+        if type(id) is list:
+            print('Fixing data')
+            result = id[0]
+            if type(result) is tuple:
+                print('...')
+                result = result[0]
+        return result
+    
     def connect(self):
         try:
             # Connect to a localhost database

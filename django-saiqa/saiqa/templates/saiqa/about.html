@@ -1,6 +1,7 @@
 {% extends "saiqa/base.html" %}
+{% load staticfiles %}
 {% block content %}
-  <img src="static/about.png" class="container">
+  <img src="{% static "saiqa/about.png" %}" class="container">
   <div class="front"><textarea rows="20" cols="45" readonly">
       Sima: Artificial Intelligence for Question Answering was originally created for the GCU 2018-2019 Computer Science Capstone.
 
@@ -11,5 +12,8 @@ The name Sima comes from the Greek letter S which in this instance refers to a s
 Main Coder: Mark S. Mott
 Book graphic by Joe Leon
     </textarea>
+  </div>
+  <div class="low">
+      <a href="/saiqa/"><img src="{% static "saiqa/arrowL.png" %}" alt="missing"></a>
   </div>
 {% endblock %}
