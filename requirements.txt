@@ -1,4 +1,5 @@
 absl-py==0.7.0
+annoy==1.15.1
 apyori==1.1.1
 argh==0.26.2
 asn1crypto==0.24.0
@@ -106,7 +107,7 @@ python-memcached==1.59
 pytz==2018.9
 PyYAML==3.13
 regex==2019.2.20
-requests~>2.20.0
+requests==2.19.1
 retrying==1.3.3
 s3transfer==0.1.13
 scikit-learn==0.19.2
@@ -134,8 +135,10 @@ ujson==1.35
 urllib3==1.23
 waitress==1.0.1
 watchdog==0.9.0
+watermark==1.8.1
 wcwidth==0.1.7
 Werkzeug==0.14.1
+wget==3.2
 wikipedia==1.4.0
 win-inet-pton==1.0.1
 wincertstore==0.2
