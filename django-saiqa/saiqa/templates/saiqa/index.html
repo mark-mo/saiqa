@@ -1,6 +1,9 @@
 {% extends "saiqa/base.html" %}
+{% load staticfiles %}
 {% block content %}
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+<img src="{% static "saiqa/closedBook.png" %}" class="container">
+<div class="front">
 <form action="/saiqa/login/" method="post">
   {% csrf_token %}
   <input type="submit" name="submit_button" value="Login">
@@ -9,4 +12,5 @@
   {% csrf_token %}
   <input type="submit" name="submit_button" value="Register">
 </form>
+</div>
 {% endblock %}

@@ -10,7 +10,7 @@ class GloveHandler:
     
     def __init__(self):
         # Set up the model and vector that we are using in the comparison
-        self.model = Word2Vec.load(os.getcwd() + "\\saidj\\weights\\text8.model")
+        self.model = Word2Vec.load(os.getcwd() + "\\saidj\\weights\\mrvec.model")
     
     # Returns the nth closest word to the current one
     def findnearest(self, word, n):

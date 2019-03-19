@@ -439,15 +439,33 @@ def dmnrun(fulldata, queask):
     indicesc = np.argmax(a, axis=1)
     response = ""
 
+    ans = 0
+    inp = ''
+
     for i, e, cw, cqa in list(zip(indices, indicesc, val_context_words, val_cqas))[:limit]:
         ccc = " ".join(cw)
         print("TEXT: ", ccc)
+        inp = ccc
         print("QUESTION: ", " ".join(cqa[3]))
         print("RESPONSE: ", cw[i], ["Correct", "Incorrect"][i != e])
-        response = cw[i]
+        ans = i
         print("EXPECTED: ", cw[e])
         print()
 
+    import re
+
+    reg = ',\n|,$|\.\n|\(.*?\)|\[.*?\]|(?<! [A-Z].)\.'  # Regex pattern for most unwanted cases
+    s = re.split(reg, inp)
+
+    print('--')
+    tot_index = 0
+    for line in s:
+        tot_index = tot_index + len(line)
+        if tot_index >= ans:
+            print(line)  # Return this
+            sess.close()
+            return line
+    # For safety, return this if nothing is found
     sess.close()
     return response
 
