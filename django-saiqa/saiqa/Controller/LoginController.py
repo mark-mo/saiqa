@@ -13,7 +13,6 @@ import json
 import re
 
 # Handles logging.
-# TODO: Change to decorator
 logging = Loggingdec()
 
 service = UserService()
@@ -22,7 +21,7 @@ qser = QuestionService()
 # Goes to login
 def login(request):
     # Get a random fact from the database
-    randfact = qser.findByRandom()
+    randfact = qser.findbyrandom()
     print(randfact)
     context = {
         'user_list': 'hold',
@@ -57,7 +56,7 @@ def loginuser(request):
 # Goes to registration
 def reg(request):
     # Get a random fact from the database
-    randfact = qser.findByRandom()
+    randfact = qser.findbyrandom()
     print(randfact)
     context = {
         'user_list': 'hold',
@@ -115,7 +114,3 @@ def reguser(request):
     # TODO: Pass in a random fact from the database
     logging.exit("LoginController.reguser")
     return redirect("/saiqa/login/")
-
-# Test login
-def _testlogin(user):
-    return service.createUser(user) # Check if user exists

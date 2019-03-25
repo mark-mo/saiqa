@@ -59,7 +59,6 @@ def answer(request):
         print('String')
         history_load = []
         history_load.append(history)
-    print(deres)
     
     # Return a random fact from the subject most often searched for by the user
     if deres == 'random':
@@ -81,7 +80,10 @@ def answer(request):
         # Try and change the subject if no information is found
         if response[0] == 'Nothing':
             while attempt < 4:
-                newsubject = glovehandler.findnearest(currsub,attempt)
+                newsubject = glovehandler.findnearest(currsub)
+                # If the subject is not in the vocabulary, do not try again
+                if newsubject[0] == '-':
+                    break
                 print('Trying ' + newsubject)
                 response = question_service.findbysubject(currsub, cat_sent.getcategory(), data["username"])
                 if response[0] != 'Nothing':
@@ -92,7 +94,7 @@ def answer(request):
         # If nothing is found surrounding the subject, return a negative
         if response[0] == 'Nothing':
             history_load.append(deres)
-            history_load.append('Could not find anything on' + currsub)
+            history_load.append('Could not find anything on ' + currsub)
             request.session['history'] = history_load
             
             logging.exit("QuestionController.answer")
@@ -100,10 +102,14 @@ def answer(request):
         
         sentences = []
         cleanedSents = []
+        # Create Sentence objects
         for line in response:
-            #sentence, subject, category
-            sentences.append(Sentence(line[2], line[1], line[3]))
-            cleanedSents.append(line[2])
+            # Ensure each sentence has a period at the end
+            send = line[2] # Created to solve an error
+            if send.count('.') == 0:
+                send = send + '.'
+            sentences.append(Sentence(send, line[1], line[3]))
+            cleanedSents.append(send)
         answer = dmn.dmnrun(cleanedSents, cat_sent.getsentence())
         # TODO: Update Answer and History sides
         history_load.append(deres)
@@ -136,16 +142,15 @@ def learn(request):
     # Implement InputHandler
     output, nouns = inputhandler.storeInput(sentences)
     
-    # Compare current subjects with unknown nouns list
-    currSub = question_service.getsubjects()
-    
     # Add to unknown nouns list and save
     nounpath = os.getcwd() + "/saidj/weights/unknown.csv"
     np.savetxt(nounpath, nounlist, delimiter=",")
     
-    # For testing
-    for line in output:
-        print(line.getsubject())
+    # Ensure every sentence has a period at the end
+    for i in range(0, len(output)):
+        print(output[i].getsubject())
+        if output[len(output) - 1] != '.':
+            output[len(output) - 1] = output[len(output) - 1] + '.'
     
     # Send Sentence models to database
     response = question_service.createSents(output, ref, rely)

@@ -49,8 +49,10 @@ class InputHandler():
             # Put a space between the last letter and the period
             if line == '':
                 break
-            hold = line[:-1]
-            hold = hold + ' .'
+            # Put a space before the period
+            if line[len(line) - 1] == '.':
+                line = line[:-1] # Remove period if there is one
+            line = line + ' .'
             # Get the subject
             sub = self.subfinder(line)
             # sub = 'test'

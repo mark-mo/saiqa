@@ -4,6 +4,8 @@ import numpy as np
 import itertools
 import tensorflow as tf
 
+
+# Required so that all of the Tensors keep the same Graph
 def dmnrun(fulldata, queask):
     # Loading saved meta graph
     sess = tf.Session()
@@ -470,6 +472,7 @@ def dmnrun(fulldata, queask):
     return response
 
 
+# Loads in test the DMN. Not for live use
 def loaddata(filename):
     all_data = []
     with open(filename, "r", encoding="utf8") as train:

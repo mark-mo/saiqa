@@ -29,7 +29,7 @@ class QuestionService(object):
     
     
     # Gets a random fact from the database
-    def findByRandom(self):
+    def findbyrandom(self):
         # Get a random sentence
         return self.data.findbyrandom()
     

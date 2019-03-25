@@ -47,9 +47,7 @@ $(function(){
     <img src="{% static "saiqa/middlepage.png" %}" class="container">
     <div class="front">
       <h1>Question</h1>
-      <div class="history">
-	<p id="history">Hello {{ user.username }}, welcome to SAI-QA.  What question do you have today?</p>
-      </div>
+      <p>Hello {{ user.username }}, welcome to SAI-QA.  What question do you have today?</p>
       <form method="post" id="questionform" name="questionform">
         <p>
             <label for="question">Enter name: </label>

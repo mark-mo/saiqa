@@ -2,8 +2,8 @@
 {% load staticfiles %}
 {% block content %}
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-<img src="{% static "saiqa/closedBook.png" %}" class="container">
-<div class="front">
+<img src="{% static "saiqa/closedBook.png" %}" class="frontimage">
+<div class="frontpage">
 <form action="/saiqa/login/" method="post">
   {% csrf_token %}
   <input type="submit" name="submit_button" value="Login">

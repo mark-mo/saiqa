@@ -18,6 +18,7 @@ gradArr = []
 w = []
 
 
+# Get all training and testing data from csv files
 def getData():
     # Allows train and test arrays to be the same size
     total, place = id.getTraining(800)
@@ -47,6 +48,7 @@ def toSparse(x):
     return focus
 
 
+# Transposes an array when numpy's implementation does not work
 def tranSin(x):
     size = len(x)
     rez = np.zeros((size, 1))
@@ -63,6 +65,7 @@ def tranSin(x):
     return rez
 
 
+# Turns array into a 1-hot array
 def oneHotIt(Y):
     line = id.reformatSingAr(Y)
     line = np.asarray(line)
@@ -72,6 +75,7 @@ def oneHotIt(Y):
     return OHX
 
 
+# Find the loss for the current weight
 def lossFunc(w, m, x, y_mat, lam, prob):
     yProb = prob.dot(y_mat)
     sumY = np.sum(yProb)
@@ -83,7 +87,8 @@ def lossFunc(w, m, x, y_mat, lam, prob):
     return full
 
 
-def expandAr(x, shape):  # Expand matrix by 1
+# Expand matrix by the shape provided
+def expandAr(x, shape):  
     shape = len(x)
     sizeIn = len([0]) + 1
     xT = np.resize(x, (shape, sizeIn))
@@ -92,6 +97,7 @@ def expandAr(x, shape):  # Expand matrix by 1
     return xT
 
 
+# Find the gradient for the current weight
 def gradFunc(w, m, x, y_mat, lam, prob):
     # grad = (-1 / m) * np.dot(tranSin(x),(y_mat - prob)) + lam*w
     probT = tranSin(prob)
@@ -105,6 +111,7 @@ def gradFunc(w, m, x, y_mat, lam, prob):
     return full
 
 
+# Run the cost function over the input
 def getGrad(w, x, y_mat, lam):
     x = np.asarray(x, 'float64')
     m = x.shape[0]  # First we get the number of training examples
@@ -117,6 +124,7 @@ def getGrad(w, x, y_mat, lam):
     return grad, loss
 
 
+# Run the softmax function over the array
 def softmax(z):
     z -= np.max(z)  # subtract the max for numerical stability
     expZ = np.exp(z)
@@ -126,11 +134,13 @@ def softmax(z):
     return sm
 
 
+# Format the array before softmaxing it
 def getProbs(someX):
     probs = softmax(np.dot(someX, w))
     return probs
 
 
+# Get the classification of a single sentence
 def response(x):
     wpath = os.getcwd() + "\saidj\weights\softweights.csv"
     w = np.loadtxt(wpath, delimiter=",")
@@ -143,6 +153,7 @@ def response(x):
     return id.probsToWord(word)
 
 
+# Find how accurate the current weight is
 def getAccuracy(someX, someY, w):
     totalCorrect = 0
     prob = getProbs(someX)
@@ -159,6 +170,7 @@ def getAccuracy(someX, someY, w):
     return accuracy
 
 
+# For training
 def mainRun():
     global w
     parser = argparse.ArgumentParser()

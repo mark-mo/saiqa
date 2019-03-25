@@ -7,7 +7,7 @@ import string
 
 reader = ""
 
-# Converts octal decimal to its corresponding character
+# Converts octal decimal to its corresponding category
 def probsToWord(prob):
     if int(prob[0]) == 1:
         return 'time'
@@ -31,7 +31,7 @@ def octalConv(x):
         ans.append(convNum)
     return ans
 
-# Fixes a 3d array to account for bug in Numpy
+# Fixes a 2d array to account for bug in Numpy
 def reformatAr(x):
     data = []
     for line in x:
@@ -41,7 +41,7 @@ def reformatAr(x):
         data.append(ex)
     return data
 
-# Fixes a 2D array to account for bug in Numpy
+# Fixes a 1D array to account for bug in Numpy
 def reformatSingAr(x):
     data = []
     ex = x.split(',')
