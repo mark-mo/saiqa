@@ -15,8 +15,9 @@ class InputHandler():
     def cleanUp(self, input):
         reg1 = '"'
         fix = re.sub(reg1, '', input)
-        reg = ',\n|,$|\.\n|\(.*?\)|\[.*?\]|(?<! [A-Z].)\.'  # Regex pattern for most unwanted cases
+        reg = '(?<=\.)\n|(?<=[A-z]\.) +(?![A-Z]\.)'  # Regex pattern for most unwanted cases
         s = re.split(reg, fix)
+        print(s)
         return s
 
     # Get subjects of the input using SpaCy

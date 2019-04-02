@@ -17,12 +17,12 @@ from saiqa.Utility.GloveHandler import *
 import saiqa.Training.DMNInner as dmn
 import saiqa.Training.importData as id
 # Handles logging.
-# TODO: Change to decorator
 logging = Loggingdec()
 
 # Initialize classes
 question_service = QuestionService()
 inputhandler = InputHandler()
+# Does not work with Pytest
 glovehandler = GloveHandler()
 
 # Handles entering the question panel
@@ -94,7 +94,7 @@ def answer(request):
         # If nothing is found surrounding the subject, return a negative
         if response[0] == 'Nothing':
             history_load.append(deres)
-            history_load.append('Could not find anything on ' + currsub)
+            history_load.append('Could not find anything on ' + str(currsub) + '.')
             request.session['history'] = history_load
             
             logging.exit("QuestionController.answer")

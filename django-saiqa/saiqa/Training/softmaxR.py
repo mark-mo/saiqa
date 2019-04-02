@@ -5,7 +5,7 @@
 # You may obtain a copy of the License at
 #
 #     http://www.apache.org/licenses/LICENSE-2.0
-# Code from https://gist.github.com/awjuliani/5ce098b4b76244b7a9e3#file-softmax-ipynb
+# Code based off of https://gist.github.com/awjuliani/5ce098b4b76244b7a9e3#file-softmax-ipynb
 import pandas as pd
 import numpy as np
 import scipy.sparse

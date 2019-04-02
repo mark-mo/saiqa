@@ -1,5 +1,4 @@
 # Code from https://github.com/Steven-Hewitt/QA-with-Tensorflow/blob/master/QA%20with%20Tensorflow.ipynb
-# TODO: Clean up and separate code
 import numpy as np
 import itertools
 import tensorflow as tf
@@ -453,18 +452,12 @@ def dmnrun(fulldata, queask):
         ans = i
         print("EXPECTED: ", cw[e])
         print()
-
-    import re
-
-    reg = ',\n|,$|\.\n|\(.*?\)|\[.*?\]|(?<! [A-Z].)\.'  # Regex pattern for most unwanted cases
-    s = re.split(reg, inp)
-
+    
     print('--')
     tot_index = 0
-    for line in s:
+    for line in fulldata:
         tot_index = tot_index + len(line)
         if tot_index >= ans:
-            print(line)  # Return this
             sess.close()
             return line
     # For safety, return this if nothing is found

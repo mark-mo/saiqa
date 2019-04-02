@@ -27,6 +27,6 @@ class GloveHandler:
             approximate_neighbors = self.model.most_similar([vector], topn=11, indexer=annoy_index)
             # Return the neighbor to the specified distance
             return approximate_neighbors[1:3][0]
-        except KeyError as error:
+        except (KeyError, Exception) as error:
             logging.error(error)
             return ['-','-','-']

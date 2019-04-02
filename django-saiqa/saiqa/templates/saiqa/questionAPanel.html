@@ -35,19 +35,46 @@ $(function(){
 		data: document.getElementById('question').value,
         	dataType: "json",
         	success: function(data)
-    		{
-			let stdata = data.toString()
-			let res = stdata.replace(/,/g, "<br>");
-      	  		document.getElementById("history").innerHTML = res;
+    		{			
+			data = data.toString();
+			// Split the data into an array
+			let res = data.split(/(?<=[\.?!(random)]),/);
+			let out = "";
+			let arr = "";
+			let hold;
+			let i;
+			let neg = res.length - 4;
+			let size = 0;
+			// Size = 0 when neg is greater than 0, 1 when neg is less than 0
+			if(neg < 0) {
+				size = 1;
+			}
+			// Put the last four elements into arr
+			for(i = 0; i < res.length; i++) {
+				out = out + res[i] + "<br>";
+				
+				//Selects the last four elements in the array.  Not needed due to the overflow tag
+				if(i >= neg || size == 1) {
+					arr = arr + res[i] + "<br>";
+				}
+			}
+			// Replace the elements specified with the new data
+      	  		document.getElementById("history").innerHTML = arr;
+			document.getElementById("fullhist").innerHTML = out;
         	},
       	});
   });
 })
 </script>
     <img src="{% static "saiqa/rightflip.png" %}" class="container">
+    <div class="fullhist">
+	<p id="fullhist">Hello {{ user.username }}, welcome to SAI-QA.  What question do you have today?</p>
+    </div>
     <div class="front">
       <h1>Question</h1>
-      <p id="history">Hello {{ user.username }}, welcome to SAI-QA.  What question do you have today?</p>
+      <div class="history">
+	<p id="history">Hello {{ user.username }}, welcome to SAI-QA.  What question do you have today?</p>
+      </div>
       <form method="post" id="questionform" name="questionform">
         <p>
             <label for="question">Enter name: </label>
