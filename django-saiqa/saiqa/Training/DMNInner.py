@@ -2,7 +2,7 @@
 import numpy as np
 import itertools
 import tensorflow as tf
-
+import time
 
 # Required so that all of the Tensors keep the same Graph
 def dmnrun(fulldata, queask):
@@ -121,7 +121,7 @@ def dmnrun(fulldata, queask):
     # How many questions the network trains on each time it is trained.
     # Some questions are counted multiple times.
 
-    display_step = 100
+    display_step = 1
     # How many iterations of training occur before each validation check.
 
     # Input Module
@@ -422,9 +422,13 @@ def dmnrun(fulldata, queask):
     validation_set, val_context_words, val_cqas = prep_batch(batch_data, True)
 
     holder = [corrbool, locs, total_loss, logits, facts_0s, w_1] + attends + [query, cs, question_module_outputs]
-
+    
+    print('Starting session')
+    start_time = time.time()
     ancr = sess.run([corrbool, locs, total_loss, logits, facts_0s, w_1] + attends +
                     [query, cs, question_module_outputs], feed_dict=validation_set)
+    elapsed_time = time.time() - start_time
+    print(elapsed_time)
     a = ancr[0]
     n = ancr[1]
     cr = ancr[2]
@@ -452,16 +456,15 @@ def dmnrun(fulldata, queask):
         ans = i
         print("EXPECTED: ", cw[e])
         print()
+    # For safety, return this if nothing is found
+    sess.close()
     
     print('--')
     tot_index = 0
     for line in fulldata:
         tot_index = tot_index + len(line)
         if tot_index >= ans:
-            sess.close()
             return line
-    # For safety, return this if nothing is found
-    sess.close()
     return response
 
 

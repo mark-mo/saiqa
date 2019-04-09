@@ -11,11 +11,11 @@ reader = ""
 def probsToWord(prob):
     if int(prob[0]) == 1:
         return 'time'
-    if int(prob[1]) == 1:
+    elif int(prob[1]) == 1:
         return 'location'
-    if int(prob[2]) == 1:
+    elif int(prob[2]) == 1:
         return 'property'
-    if int(prob[3]) == 1:
+    elif int(prob[3]) == 1:
         return 'possession'
     else:
         return 'property'
@@ -77,8 +77,12 @@ def wideArray(x, weight):
 # Adjusts size of a 2-d array to allow for matrix multiplication
 def wideSingleArray(x, weight):
     wide = np.zeros([len(weight)])
-    for i in range(0, len(x)):
-        wide[i] = x[i]
+    if len(x) > len(weight):
+        for i in range(0, len(weight)):
+            wide[i] = x[i]
+    else:
+        for i in range(0, len(x)):
+            wide[i] = x[i]
     np.asarray(wide)
     return wide
 

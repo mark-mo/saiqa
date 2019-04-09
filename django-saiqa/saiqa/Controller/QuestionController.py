@@ -140,17 +140,7 @@ def learn(request):
     ref = request.POST.get('source')
     rely = request.POST.get('trust')
     # Implement InputHandler
-    output, nouns = inputhandler.storeInput(sentences)
-    
-    # Add to unknown nouns list and save
-    nounpath = os.getcwd() + "/saidj/weights/unknown.csv"
-    np.savetxt(nounpath, nounlist, delimiter=",")
-    
-    # Ensure every sentence has a period at the end
-    for i in range(0, len(output)):
-        print(output[i].getsubject())
-        if output[len(output) - 1] != '.':
-            output[len(output) - 1] = output[len(output) - 1] + '.'
+    output = inputhandler.storeInput(sentences)
     
     # Send Sentence models to database
     response = question_service.createSents(output, ref, rely)
@@ -162,4 +152,58 @@ def learn(request):
         'user': request.session['0'],
     }
     return render(request, 'saiqa/learnmod.html', context)
+
+def answerrest(request):
+    logging.entry("QuestionController.answer")
+    res = request.body
+    deres = res.decode('utf-8')
+    # Get user from the session
+    history_load = history
+    if isinstance(history, str):
+        print('String')
+        history_load = []
+        history_load.append(history)
     
+    # Return a random fact from the subject most often searched for by the user
+    if deres == 'random':
+        freqout = question_service.findbyfrequent(data["username"])
+        return JsonResponse(frequout, safe=False)
+    else:
+        # Get subject and category
+        cat_sent = inputhandler.storeInput(deres)[0]
+        
+        currsub = cat_sent.getsubject()
+        response = question_service.findbysubject(cat_sent.getsubject(), cat_sent.getcategory(), data["username"])
+        
+        attempt = 1
+        # Try and change the subject if no information is found
+        if response[0] == 'Nothing':
+            while attempt < 4:
+                newsubject = glovehandler.findnearest(currsub)
+                # If the subject is not in the vocabulary, do not try again
+                if newsubject[0] == '-':
+                    break
+                print('Trying ' + newsubject)
+                response = question_service.findbysubject(currsub, cat_sent.getcategory(), data["username"])
+                if response[0] != 'Nothing':
+                    break
+                print(newsubject + 'not found')
+                attempt = attempt + 1
+        
+        # If nothing is found surrounding the subject, return a negative
+        if response[0] == 'Nothing':
+            logging.exit("QuestionController.answer")
+            return JsonResponse('Could not find anything on ' + str(currsub) + '.', safe=False)
+        
+        sentences = []
+        cleanedSents = []
+        # Create Sentence objects
+        for line in response:
+            # Ensure each sentence has a period at the end
+            send = line[2] # Created to solve an error
+            if send.count('.') == 0:
+                send = send + '.'
+            sentences.append(Sentence(send, line[1], line[3]))
+            cleanedSents.append(send)
+        answer = dmn.dmnrun(cleanedSents, cat_sent.getsentence())
+        return JsonResponse(answer, safe=False)

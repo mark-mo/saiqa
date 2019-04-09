@@ -2,8 +2,6 @@
 # Created by Mark Mott
 import regex as re
 import json
-import nltk
-from nltk.parse import CoreNLPDependencyParser
 
 from saiqa.Model.Sentence import Sentence
 import saiqa.Training.softmaxR as sr
@@ -28,13 +26,17 @@ class InputHandler():
         narray = []
         index = -1
         counter = 0
-
+        
         for np in doc.noun_chunks:
             for word in np:
                 if word.dep_ == "nsubj":
                     index = counter
+                    break
             narray.append(np)
             counter = counter + 1
+        
+        if index == -1:
+            return 'it'
         return narray[index]
 
     # Turns input into a form the database can accept

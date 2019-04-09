@@ -32,20 +32,22 @@ def getData():
 
 # Creates an array of only 1 or 0
 def toSparse(x):
-    index = 0
     large = 0
-    focus = x[0]
-    # Find index of largest number
-    index = np.argmin(focus)
-    large = focus[0]
+    if len(x) == 1:
+        x = x[0]
+    if len(x) == 1:
+        x = [0]
 
-    # Modify array
-    for i in range(0, len(focus)):
-        if focus[i] == large:
-            focus[i] = 1
+    for i in range(0, len(x)):
+        if x[i] > large:
+            large = x[i]
+
+    for i in range(0, len(x)):
+        if x[i] == large:
+            x[i] = 1
         else:
-            focus[i] = 0
-    return focus
+            x[i] = 0
+    return x
 
 
 # Transposes an array when numpy's implementation does not work
