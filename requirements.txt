@@ -133,7 +133,7 @@ tqdm==4.26.0
 traitlets==4.3.2
 ujson==1.35
 urllib3==1.23
-waitress==1.0.1
+waitress==1.4.2
 watchdog==0.9.0
 watermark==1.8.1
 wcwidth==0.1.7
