@@ -26,7 +26,7 @@ Cython==0.28.5
 cytoolz==0.9.0.1
 decorator==4.3.0
 dill==0.2.8.2
-Django==2.1.7
+Django==2.2.13
 django-pyodbc-azure==1.10.0.1
 django-saiqa==0.1
 django-waitress==0.1.0
