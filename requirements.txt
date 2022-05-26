@@ -131,7 +131,7 @@ toolz==0.9.0
 tornado==5.1
 tqdm==4.26.0
 traitlets==4.3.2
-ujson==1.35
+ujson==5.2.0
 urllib3==1.23
 waitress==1.0.1
 watchdog==0.9.0
